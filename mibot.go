@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
@@ -20,8 +21,7 @@ func main() {
 	slackToken := os.Getenv("SLACK_TOKEN")
 	kubeconfigPath := os.Getenv("KUBECONFIG")
 
-	var kubeconfig *string
-	kubeconfig = flag.String("kubeconfig", kubeconfigPath, "absolute path to the kubeconfig file")
+	kubeconfig := flag.String("kubeconfig", kubeconfigPath, "absolute path to the kubeconfig file")
 	flag.Parse()
 
 	// use the current context in kubeconfig
@@ -71,7 +71,7 @@ func main() {
 				deploymentsClient := clientset.AppsV1().Deployments(args["namespace"])
 
 				var deployments strings.Builder
-				list, err := deploymentsClient.List(metav1.ListOptions{})
+				list, err := deploymentsClient.List(context.TODO(), metav1.ListOptions{})
 				if err != nil {
 					panic(err)
 				}
@@ -87,7 +87,7 @@ func main() {
 				podsClient := clientset.CoreV1().Pods(args["namespace"])
 
 				var pods strings.Builder
-				list, err := podsClient.List(metav1.ListOptions{})
+				list, err := podsClient.List(context.TODO(), metav1.ListOptions{})
 				if err != nil {
 					panic(err)
 				}
